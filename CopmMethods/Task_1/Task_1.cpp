@@ -2,8 +2,10 @@
 //
 
 #include <iostream>
+#include <fstream>
 #include <cmath>
 #include <vector>
+#include <omp.h>
 using namespace std;
 
 
@@ -51,7 +53,6 @@ vector <pair<double, double>> separate(double a, double b, double n)
 }
 void bisection(double a, double b, double eps)
 {
-    cout << endl;
 
     double c = (a + b) / 2;
 
@@ -62,7 +63,7 @@ void bisection(double a, double b, double eps)
     bool flag = 0;
     int counter = 0;
 
-    if (A * C > 0 & C * B > 0)
+    if (A * C > 0 && C * B > 0)
     {
         if (C == 0)
         {
@@ -108,20 +109,24 @@ void bisection(double a, double b, double eps)
             }
         }
     }
+
     if (!flag)
     {
-        cout << "X:=(a+b)/2 = " << (a + b) / 2 << endl;
-        cout << "D:=(b-a)/2 = " << (b - a) / 2 << endl;
-        cout << c << " корень" << endl;
-        cout << C << " невязка" << endl;
-        cout << counter << " итераций" << endl;
+#pragma omp critical
+        {
+            cout << "X:=(a+b)/2 = " << (a + b) / 2 << endl;
+            cout << "D:=(b-a)/2 = " << (b - a) / 2 << endl;
+            cout << c << " корень" << endl;
+            cout << C << " невязка" << endl;
+            cout << counter << " итераций" << endl;
+            cout << endl;
+        }
     }
-
+    
     return;
 }
 void Newton(double a, double b, double eps, double start)
 {
-    cout << endl;
     /*******************************************************************************
     тут я хотел сделать грамотную проверку на знакопостоянство, но что-то застрял
     float left = (a/(pi)) - (int)(a/(pi));
@@ -155,15 +160,18 @@ void Newton(double a, double b, double eps, double start)
         x = x - f(x) / df(x);
         counter++;
     }
-    cout << x << " корень" << endl;
-    cout << f(x) << " невязка" << endl;
-    cout << counter << " итераций" << endl;
+    #pragma omp critical
+    {
+        cout << x << " корень" << endl;
+        cout << f(x) << " невязка" << endl;
+        cout << counter << " итераций" << endl;
+        cout << endl;
+    }
     return;
 
 }
 void NewtonMod(double a, double b, double eps, double start)
 {
-    cout << endl;
     /*******************************************************************************
     тут я хотел сделать грамотную проверку на знакопостоянство, но что-то застрял
     float left = (a/(pi)) - (int)(a/(pi));
@@ -197,20 +205,22 @@ void NewtonMod(double a, double b, double eps, double start)
         x = x - f(x) / dfx;
         counter++;
     }
-    cout << x << " корень" << endl;
-    cout << f(x) << " невязка" << endl;
-    cout << counter << " итераций" << endl;
-    return;
+    #pragma omp critical
+    {
+        cout << x << " корень" << endl;
+        cout << f(x) << " невязка" << endl;
+        cout << counter << " итераций" << endl; 
+        cout << endl;
+    }
+        return;
 
 }
 void Hord(double a, double b, double eps, double start1, double start2)
 {
-    cout << endl;
-
     int counter = 0;
     double x1 = start1;
     double x2 = start2;
-    double x3;
+    double x3 = 0;
     while (abs(x2 - x1) > eps)
     {
         counter++;
@@ -218,53 +228,91 @@ void Hord(double a, double b, double eps, double start1, double start2)
         x1 = x2;
         x2 = x3;
     }
-    cout << x3 << " корень" << endl;
-    cout << f(x3) << " невязка" << endl;
-    cout << counter << " итераций" << endl;
+    #pragma omp critical
+    {
+        cout << x3 << " корень" << endl;
+        cout << f(x3) << " невязка" << endl;
+        cout << counter << " итераций" << endl;
+        cout << endl;
+    }
     return;
 }
 int main()
 {
+    ifstream F;
+    F.open("C:\\Users\\User\\Desktop\\6_sem\\CopmMethods\\Task_1\\data.txt", ios::out);
     setlocale(LC_ALL, "");
     double a, b;
     cout << "введите значения a и b" << endl;
-    cin >> a >> b;
+    F >> a >> b;
+    cout << a << " "<<b<<endl;
 
     double n = 1000000;
     cout << "введите значения n" << endl;
-    cin >> n;
+    F >> n;
+    cout << n << endl;
 
     vector <pair<double, double>> sections;
     sections = separate(a, b, n);
 
     int k;
     cout << "введите k - степень погрешности 10^-k" << endl;
-    cin >> k;
+    F >> k;
+    cout << k << endl;
     double eps = pow(10, -k);
 
-    cout << "метод бисекции" << endl;
-    for (int i = 0; i < sections.size(); i++)
+    double start;
+    double end;
+    cout << "****************метод бисекции****************" << endl;
     {
-        bisection(sections[i].first, sections[i].second, eps);
-    }
-    cout << endl;
-    cout << "****************метод Ньютона****************" << endl;
-    for (int i = 0; i < sections.size(); i++)
-    {
-        Newton(sections[i].first, sections[i].second, eps, sections[i].first);
-    }
-    cout << endl;
-    cout << "****************модифицированный метод Ньютона****" << endl;
-    for (int i = 0; i < sections.size(); i++)
-    {
-        NewtonMod(sections[i].first, sections[i].second, eps, sections[i].first);
+        start = omp_get_wtime();
+        #pragma omp parallel for schedule(static,1) 
+            for (int i = 0; i < sections.size(); i++)
+            {
+
+                bisection(sections[i].first, sections[i].second, eps);
+            }
+        cout << endl;
+        end = omp_get_wtime();
+        cout << "время работы метода бисекции " << end - start << endl << endl;
     }
 
-    cout << endl;
-    cout << "**************** метод Секущих***********" << endl;
-    for (int i = 0; i < sections.size(); i++)
+    cout << "****************метод Ньютона****************" << endl;
     {
-        Hord(sections[i].first, sections[i].second, eps, sections[i].first, sections[i].second);
+        start = omp_get_wtime();
+        #pragma omp parallel for schedule(static,1)
+            for (int i = 0; i < sections.size(); i++)
+            {
+                Newton(sections[i].first, sections[i].second, eps, sections[i].first);
+            }
+        cout << endl;
+        end = omp_get_wtime();
+        cout << "время работы метода Ньютона " << end - start << endl << endl;
+    }
+    cout << "****************модифицированный метод Ньютона****" << endl;
+    {
+        start = omp_get_wtime();
+        #pragma omp parallel for schedule(static,1)
+            for (int i = 0; i < sections.size(); i++)
+            {
+                NewtonMod(sections[i].first, sections[i].second, eps, sections[i].first);
+            }
+        cout << endl;
+        end = omp_get_wtime();
+        cout << "время работы модифированного метода Ньютона " << end - start << endl << endl;
+    }
+
+    cout << "**************** метод Секущих***********" << endl;
+    {
+        start = omp_get_wtime();
+        #pragma omp parallel for schedule(static,1)
+            for (int i = 0; i < sections.size(); i++)
+            {
+                Hord(sections[i].first, sections[i].second, eps, sections[i].first, sections[i].second);
+            }
+        cout << endl;
+        end = omp_get_wtime();
+        cout << "время работы  метода Секущих " << end - start << endl << endl;   
     }
 
     return 0;
