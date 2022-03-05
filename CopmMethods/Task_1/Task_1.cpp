@@ -114,10 +114,9 @@ void bisection(double a, double b, double eps)
     {
 #pragma omp critical
         {
-            cout << "X:=(a+b)/2 = " << (a + b) / 2 << endl;
             cout << "D:=(b-a)/2 = " << (b - a) / 2 << endl;
             cout << c << " корень" << endl;
-            cout << C << " невязка" << endl;
+            cout << abs(C) << " невязка" << endl;
             cout << counter << " итераций" << endl;
             cout << endl;
         }
@@ -153,6 +152,7 @@ void Newton(double a, double b, double eps, double start)
             return;
         }
     }
+    cout << start << " начальное приближение " << endl;
 
     while (abs(buf - x) > eps)
     {
@@ -163,7 +163,7 @@ void Newton(double a, double b, double eps, double start)
     #pragma omp critical
     {
         cout << x << " корень" << endl;
-        cout << f(x) << " невязка" << endl;
+        cout << abs(f(x)) << " невязка" << endl;
         cout << counter << " итераций" << endl;
         cout << endl;
     }
@@ -198,6 +198,7 @@ void NewtonMod(double a, double b, double eps, double start)
             return;
         }
     }
+    cout << start << " начальное приближение " << endl;
     double dfx = df(start);
     while (abs(buf - x) > eps)
     {
@@ -205,22 +206,21 @@ void NewtonMod(double a, double b, double eps, double start)
         x = x - f(x) / dfx;
         counter++;
     }
-    #pragma omp critical
-    {
         cout << x << " корень" << endl;
-        cout << f(x) << " невязка" << endl;
+        cout << abs(f(x)) << " невязка" << endl;
         cout << counter << " итераций" << endl; 
         cout << endl;
-    }
         return;
 
 }
+
+
 void Hord(double a, double b, double eps, double start1, double start2)
 {
     int counter = 0;
     double x1 = start1;
     double x2 = start2;
-    double x3 = 0;
+    double x3 = (x2+x1)/2;
     while (abs(x2 - x1) > eps)
     {
         counter++;
@@ -228,17 +228,20 @@ void Hord(double a, double b, double eps, double start1, double start2)
         x1 = x2;
         x2 = x3;
     }
-    #pragma omp critical
-    {
+    //#pragma omp critical
         cout << x3 << " корень" << endl;
-        cout << f(x3) << " невязка" << endl;
+        cout <<abs(f(x3)) << " невязка" << endl;
         cout << counter << " итераций" << endl;
         cout << endl;
-    }
+
     return;
 }
+
+
+
 int main()
 {
+    cout.precision(15);
     ifstream F;
     F.open("C:\\Users\\User\\Desktop\\6_sem\\CopmMethods\\Task_1\\data.txt", ios::out);
     setlocale(LC_ALL, "");
@@ -250,10 +253,11 @@ int main()
     double n = 1000000;
     cout << "введите значения n" << endl;
     F >> n;
-    cout << n << endl;
+    cout << n << endl<<endl;
 
     vector <pair<double, double>> sections;
     sections = separate(a, b, n);
+    cout << endl << "всего отрезков: " << sections.size()<<endl;
 
     int k;
     cout << "введите k - степень погрешности 10^-k" << endl;
@@ -280,7 +284,7 @@ int main()
     cout << "****************метод Ньютона****************" << endl;
     {
         start = omp_get_wtime();
-        #pragma omp parallel for schedule(static,1)
+        //#pragma omp parallel for schedule(static,1)
             for (int i = 0; i < sections.size(); i++)
             {
                 Newton(sections[i].first, sections[i].second, eps, sections[i].first);
@@ -292,7 +296,7 @@ int main()
     cout << "****************модифицированный метод Ньютона****" << endl;
     {
         start = omp_get_wtime();
-        #pragma omp parallel for schedule(static,1)
+        //#pragma omp parallel for schedule(static,1)
             for (int i = 0; i < sections.size(); i++)
             {
                 NewtonMod(sections[i].first, sections[i].second, eps, sections[i].first);
@@ -305,7 +309,7 @@ int main()
     cout << "**************** метод Секущих***********" << endl;
     {
         start = omp_get_wtime();
-        #pragma omp parallel for schedule(static,1)
+        //#pragma omp parallel for schedule(static,1)
             for (int i = 0; i < sections.size(); i++)
             {
                 Hord(sections[i].first, sections[i].second, eps, sections[i].first, sections[i].second);
