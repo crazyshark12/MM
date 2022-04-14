@@ -112,7 +112,6 @@ void bisection(double a, double b, double eps)
 
     if (!flag)
     {
-#pragma omp critical
         {
             cout << "D:=(b-a)/2 = " << (b - a) / 2 << endl;
             cout << c << " корень" << endl;
@@ -265,20 +264,14 @@ int main()
     cout << k << endl;
     double eps = pow(10, -k);
 
-    double start;
-    double end;
     cout << "****************метод бисекции****************" << endl;
     {
-        start = omp_get_wtime();
-        #pragma omp parallel for schedule(static,1) 
             for (int i = 0; i < sections.size(); i++)
             {
 
                 bisection(sections[i].first, sections[i].second, eps);
             }
         cout << endl;
-        end = omp_get_wtime();
-        cout << "время работы метода бисекции " << end - start << endl << endl;
     }
 
     cout << "****************метод Ньютона****************" << endl;

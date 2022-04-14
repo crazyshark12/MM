@@ -1,0 +1,31 @@
+--1. Сколько имеется питомцев в возрасте 1 год, 2 года, и т.д.
+Select Count(*) From Pet
+Group by age
+
+--2. Сколько имеется котов, собак и т.д. в возрасте 1 год, 2 года, и т.д.
+Select age,pet_type.Name, Count(*) From Pet
+Join Pet_type On pet.pet_type_ID = pet_type.Pet_Type_ID
+Group by Pet_Type.Name,Age
+
+--3. Виды питомцев, средний возраст которых меньше шести лет:
+Select pet_type.Name, Avg(convert(decimal, Age)) From Pet
+Join Pet_type On pet.pet_type_ID = pet_type.Pet_Type_ID
+Group by Pet_Type.Name
+having Avg(convert(decimal, Age)) < 6 
+
+--4. Фамилии сотрудников, выполнивших более пяти заказов.
+select  last_name,count(*)  from person per
+Join Employee ON Employee.Person_ID = per.Person_ID
+Join Order1 as o ON o.Employee_ID = Employee.Employee_ID and o.Is_done = 1
+Group by last_name
+having count(*) > 5
+
+--5 имена заказчиков, которые делали заказы в ноябре или декабре
+Select last_name from order1,owner,person
+where order1.Owner_ID = owner.Owner_ID and owner.person_ID = person.person_ID and MONTH(time_order) IN (11,12)
+group by last_name
+
+--6 выводит инициалы людей
+SELECT Left(Last_Name,1) + '.' + Left(First_Name,1) AS Initials  
+FROM Person
+ORDER BY Last_Name, first_name;  
