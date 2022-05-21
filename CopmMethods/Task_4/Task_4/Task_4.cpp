@@ -83,15 +83,15 @@ double F1(double x)
 /////////////////////////////////
 double f3(double x) // x^3 + 2 * x^2 - 10*x +1 
 {
-    return pow(x,3) + 2*pow(x,2) - 10*x + 1;
+    return pow(x,3) + 2550;
 }
 double df3(double x)
 {
-    return 3*pow(x, 2) + 4*x - 10;
+    return 3*pow(x, 2) ;
 }
 double ddf3(double x)
 {
-    return 6 * x + 4;
+    return 6 * x ;
 }
 double dddf3(double x)
 {
@@ -103,7 +103,7 @@ double ddddf3(double x)
 }
 double F3(double x)
 {
-    return pow(x, 4) / 4 + 2 * pow(x, 3)/3 - 5 * x*x + x;
+    return pow(x, 4) / 4 + 2550*x;
 }
 /////////////////////////////////
 double f4(double x) // 0.5*x^4 + x^3 + 2 * x^2 - 10*x +1 
@@ -199,12 +199,12 @@ int main()
     double(*ddddf)(double) = &ddddf1;
     double(*F)(double) = &F1;*/
 
-    /*double(*f)(double) = &f3;
+    double(*f)(double) = &f3;
     double(*df)(double) = &df3;
     double(*ddf)(double) = &ddf3;
     double(*dddf)(double) = &dddf3;
     double(*ddddf)(double) = &ddddf3;
-    double(*F)(double) = &F3;*/
+    double(*F)(double) = &F3;
 
     /*double(*f)(double) = &f4;
     double(*df)(double) = &df4;
@@ -213,12 +213,12 @@ int main()
     double(*ddddf)(double) = &ddddf4;
     double(*F)(double) = &F4;*/
 
-    double(*f)(double) = &fe;
-    double(*df)(double) = &dfe;
-    double(*ddf)(double) = &ddfe;
-    double(*dddf)(double) = &dddfe;
-    double(*ddddf)(double) = &ddddfe;
-    double(*F)(double) = &Fe;
+    //double(*f)(double) = &fe;
+    //double(*df)(double) = &dfe;
+    //double(*ddf)(double) = &ddfe;
+    //double(*dddf)(double) = &dddfe;
+    //double(*ddddf)(double) = &ddddfe;
+    //double(*F)(double) = &Fe;
 
     double J = F(b) - F(a);
     cout << "значение интеграла: " << J<<endl;
@@ -267,7 +267,7 @@ int main()
     cout << "--------------------------------ВТОРОЕ ЗАДАНИЕ--------------------------- \n\n";
 
     ////////////////////// левый ////////////////////////
-    int m = 1000000;
+    int m = 50000;
     cin >> m;
     double sum = 0;
     double h = (b - a) / m;

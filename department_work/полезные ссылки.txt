@@ -1,1 +1,7 @@
 https://www.youtube.com/watch?v=g5tyw1tP_U0    //Creating and meshing a curved pipe geometry in Salome for OpenFOAM - English
+https://www.youtube.com/watch?v=qjLqM1YYNN4	// Install LaTex
+https://discoverrussia.interfax.ru/wiki/16/     //про нефть и транспортировку
+https://www.sciencedirect.com/science/article/pii/S0920410520313802  //хорошая статья по теме
+https://neftegaz.ru/science/booty/332242-promyslovyy-sbor-i-podgotovka-nefti-gaza-i-vody/   //как избавляются от соли в трубе
+http://www.tfd.chalmers.se/~hani/kurser/OS_CFD_2019/Yanyan_Zhai/Report.pdf  // хорошая статья из которой можно взять теорию
+https://openfoamwiki.net/index.php/OpenFOAM_guide/The_PIMPLE_algorithm_in_OpenFOAM   //хороший сайт и раздел с пимплом

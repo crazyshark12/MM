@@ -21,7 +21,37 @@ double ddf(double x)
 {
     return -8 * cos(x);
 }
-vector <pair<double, double>> separate(double a, double b, double n)
+vector <pair<double, double>> separateL(double a, double b, double n)
+{
+    vector <pair<double, double> > data;
+
+    double h = (b - a) / n;
+    double x = a, y = a + h;
+    double X = f(x), Y;
+    while (y <= b)
+    {
+        Y = f(y);
+
+        if (X * Y < 0)
+        {
+            cout << x << " " << y << endl;
+            data.push_back(make_pair(x, y));
+        }
+        if (X == 0)
+        {
+            cout << x << " wow " << endl;
+        }
+        if (Y == 0)
+        {
+            cout << y << " wow " << endl;
+        }
+        X = Y;
+        x = y;
+        y += h;
+    }
+    return data;
+}
+vector <pair<double, double>> separateM(double a, double b, double n)
 {
     vector <pair<double, double> > data;
 

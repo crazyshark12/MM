@@ -1,0 +1,45 @@
+-- 1. Все оценки по выполненным заказам, исполнителями которых являлись студенты.
+Select Mark from Order1 as o
+where Is_Done = 1 and o.Employee_ID IN(Select Employee.Employee_ID from Employee where Spec = 'student')
+
+-- 2. Фамилии исполнителей, не получивших еще ни одного заказа.
+-- Последовательность отладки: 
+-- id исполнителей, у которых нет заказов, (используйте NOT IN (SELECT...)) 
+-- фамилии этих исполнителей.(присоедините еще одну таблицу)
+
+Select Last_name from Person
+where Person_ID IN(Select Person_ID from Employee as e
+Where  e.Employee_ID not IN(Select o.Employee_ID from Order1 as o))
+
+
+-- 3. Список заказов (вид услуги, время, фамилия исполнителя, кличка питомца, фамилия владельца).
+-- (используйте псевдонимы, см. в презентации раздел 2.3. Сложные соединения таблиц) 
+
+Select  service.Name, o.Time_Order,p1.Last_Name, pet.Nick, p2.Last_Name  from Order1 as o
+Join Employee as e on o.Employee_ID = e.Employee_ID
+Join Person as p1 on p1.Person_ID =  e.Person_ID
+Join Pet on pet.Pet_ID = o.Pet_ID
+Join Owner as own on own.Owner_ID = pet.Owner_ID
+Join person as p2 on p2.Person_ID = own.Person_ID
+Join Service on service.Service_ID = o.Service_ID
+-- нет 16 или 17 строчки, кажется что в ответе она повторяется 
+
+-- 4. Общий список комментариев, имеющихся в базе.
+-- (“Хватит захламлять базу, посмотрите, что вы пишите в комментариях!”).
+-- (используйте UNION)
+-- (комментарии есть в трех таблицах) 
+
+Select description from Owner
+Where description is not null and description != ''
+Union
+select comments from Order1
+where Comments is not null and Comments != ''
+Union
+Select description from Pet
+Where description is not null and description != ''
+
+-- 5. Имена и фамилии сотрудников, хотя бы раз получивших пятерку за выполнение заказа. 
+-- (используйте EXISTS)
+Select p.first_Name, p.last_name from Person as p
+Where p.Person_ID IN( select person_ID from Employee 
+where Employee.Employee_ID IN(select distinct Employee_ID from  Order1  Where 5 = order1.mark))
